@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
 
       matrix:
-        version_branch: [18.04]
+        version_branch: [18.04, 20.04]
 
     steps:
       - name: Checkout out the codebase
