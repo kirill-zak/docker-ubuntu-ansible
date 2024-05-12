@@ -13,6 +13,7 @@ Keep all version in one repository under different tags
 ## Platforms
 - `linux/386` (only `18.04`)
 - `linux/amd64`
+- `linux/arm/v7`
 
 ## How to Build
 
