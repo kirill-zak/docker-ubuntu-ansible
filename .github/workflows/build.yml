@@ -37,12 +37,11 @@ jobs:
       - name: Build an image
         uses: docker/build-push-action@v5
         with:
-          context: ./
+          context: ./ubuntu${{ matrix.version_branch }}/.
           cache-from: type=gha
           cache-to: type=gha,mode=max
           load: true
           labels: ${{ steps.meta.outputs.labels }}
-          file: ./ubuntu${{ matrix.version_branch }}/Dockerfile
           platforms: ${{ matrix.platform }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
           push: false
