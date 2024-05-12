@@ -17,6 +17,9 @@ jobs:
         platform:
           - linux/amd64
         version_branch: [18.04, 20.04, 22.04, 24.04]
+        include:
+          - version_branch: 18.04
+            platform: linux/386
 
     steps:
       - name: Checkout out the codebase
