@@ -79,7 +79,7 @@ jobs:
           context: ./ubuntu18.04/.
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
-          platforms: linux/386,linux/amd64
+          platforms: linux/386,linux/amd64,linux/arm/v7
           push: true
           tags: |
             kirillzak/docker-ubuntu-ansible:18.04
@@ -150,7 +150,7 @@ jobs:
           context: ./ubuntu${{ matrix.version_branch }}/.
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm/v7
           push: true
           tags: |
             kirillzak/docker-ubuntu-ansible:${{ matrix.version_branch }}
@@ -211,7 +211,7 @@ jobs:
           context: ./ubuntu24.04/.
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm/v7
           push: true
           tags: |
             kirillzak/docker-ubuntu-ansible:latest
