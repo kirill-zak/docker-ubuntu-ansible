@@ -17,6 +17,7 @@ jobs:
         platform:
           - linux/amd64
           - linux/arm/v7
+          - linux/arm64/v8
         version_branch: [18.04, 20.04, 22.04, 24.04]
         include:
           - version_branch: 18.04
