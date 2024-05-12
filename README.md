@@ -10,6 +10,10 @@ Keep all version in one repository under different tags
 - `22.04`. Ubuntu 22.04.2 LTS (Jammy Jellyfish)
 - `24.04`. Ubuntu 22.04.2 LTS (Noble Numbat)
 
+## Platforms
+- `linux/386` (only `18.04`)
+- `linux/amd64`
+
 ## How to Build
 
 To build the image on your own locally, do the following:

@@ -5,6 +5,10 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch:
+
+env:
+  REGISTRY_IMAGE: kirillzak/docker-ubuntu-ansible
 
 jobs:
   test:
@@ -30,6 +34,71 @@ jobs:
       - name: Verify Ansible is accessible in the built image
         run: podman exec --tty test-container env TERM=xterm ansible --version
 
+  tag-release-18-04:
+    name: Release tags for 18.04
+    runs-on: ubuntu-latest
+    needs: test
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout out the codebase
+        uses: actions/checkout@v4
+      
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+
+      - name: Add Qemu
+        uses: docker/setup-qemu-action@v3
+
+      - name: Add Docker BuildX
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub Registry
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
+
+      - name: Build and push image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ubuntu18.04/.
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
+          platforms: linux/386,linux/amd64
+          push: true
+          tags: |
+            kirillzak/docker-ubuntu-ansible:18.04
+            ghcr.io/${{ github.repository }}:18.04
+      
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-18.04
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
   tag-release:
     name: Release tags
     runs-on: ubuntu-latest
@@ -43,11 +112,17 @@ jobs:
       fail-fast: false
 
       matrix:
-        version_branch: [18.04, 20.04, 22.04, 24.04]
+        version_branch: [20.04, 22.04, 24.04]
 
     steps:
       - name: Checkout out the codebase
         uses: actions/checkout@v4
+      
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
 
       - name: Add Qemu
         uses: docker/setup-qemu-action@v3
@@ -69,14 +144,31 @@ jobs:
           password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
 
       - name: Build and push image
+        id: build
         uses: docker/build-push-action@v5
         with:
           context: ./ubuntu${{ matrix.version_branch }}/.
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
           platforms: linux/amd64
           push: true
           tags: |
             kirillzak/docker-ubuntu-ansible:${{ matrix.version_branch }}
             ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}
+      
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ matrix.version_branch }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
 
   latest-release:
     name: Latest release
@@ -87,6 +179,12 @@ jobs:
       - name: Checkout out the codebase
         uses: actions/checkout@v4
 
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+
       - name: Add Qemu
         uses: docker/setup-qemu-action@v3
 
@@ -107,11 +205,28 @@ jobs:
           password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
 
       - name: Build and push image
+        id: build
         uses: docker/build-push-action@v5
         with:
           context: ./ubuntu24.04/.
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
           platforms: linux/amd64
           push: true
           tags: |
             kirillzak/docker-ubuntu-ansible:latest
             ghcr.io/${{ github.repository }}:latest
+
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-latest
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1

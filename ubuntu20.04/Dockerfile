@@ -1,4 +1,7 @@
-FROM ubuntu:20.04
+# Get build platform
+ARG BUILDPLATFORM=linux/amd64
+
+FROM --platform=$BUILDPLATFORM ubuntu:20.04
 LABEL maintainer="Kirill Ziuzin"
 
 ARG DEBIAN_FRONTEND=noninteractive
