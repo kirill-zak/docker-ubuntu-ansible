@@ -74,7 +74,7 @@ jobs:
 
       - name: Build and push image
         id: build
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./ubuntu18.04/.
           labels: ${{ steps.meta.outputs.labels }}
@@ -145,7 +145,7 @@ jobs:
 
       - name: Build and push image
         id: build
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./ubuntu${{ matrix.version_branch }}/.
           labels: ${{ steps.meta.outputs.labels }}
@@ -206,7 +206,7 @@ jobs:
 
       - name: Build and push image
         id: build
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./ubuntu24.04/.
           labels: ${{ steps.meta.outputs.labels }}
