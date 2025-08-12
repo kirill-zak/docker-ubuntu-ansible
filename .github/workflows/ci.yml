@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout out the codebase
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Test building image
         run: podman build -t docker-ubuntu-ansible:${{ matrix.version_branch }} ./ubuntu${{ matrix.version_branch }}/.
