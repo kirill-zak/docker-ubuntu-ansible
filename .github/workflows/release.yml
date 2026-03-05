@@ -54,7 +54,7 @@ jobs:
           images: ${{ env.REGISTRY_IMAGE }}
 
       - name: Add Qemu
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Add Docker BuildX
         uses: docker/setup-buildx-action@v3
@@ -125,7 +125,7 @@ jobs:
           images: ${{ env.REGISTRY_IMAGE }}
 
       - name: Add Qemu
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Add Docker BuildX
         uses: docker/setup-buildx-action@v3
@@ -186,7 +186,7 @@ jobs:
           images: ${{ env.REGISTRY_IMAGE }}
 
       - name: Add Qemu
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Add Docker BuildX
         uses: docker/setup-buildx-action@v3
