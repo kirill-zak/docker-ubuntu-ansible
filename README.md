@@ -5,13 +5,11 @@ Ubuntu docker container with built-in Ansible for playbook and role testing
 Keep all version in one repository under different tags
 
 ## Tags
-- `18.04`. Ubuntu 18.04 LTS (Bionic Beaver)
 - `20.04`. Ubuntu 20.04 LTS (Focal Fossa)
 - `22.04`. Ubuntu 22.04.2 LTS (Jammy Jellyfish)
 - `24.04`. Ubuntu 22.04.2 LTS (Noble Numbat)
 
 ## Platforms
-- `linux/386` (only `18.04`)
 - `linux/amd64`
 - `linux/arm/v7`
 - `linux/arm64/v8`
@@ -35,6 +33,13 @@ To build the image on your own locally, do the following:
 ## Author
 
 [Kirill Ziuzin](https://kirill-zak.ru/)
+
+## Archive tags
+
+Not supported and not updated docker images.
+
+List of archive tags:
+- `18.04`. Ubuntu 18.04 LTS (Bionic Beaver)
 
 ### Thanks
 Thanks for [Jeff Geerling](https://github.com/geerlingguy)

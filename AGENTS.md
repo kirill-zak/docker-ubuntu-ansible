@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## About the project
-docker-ubuntu-ansible is an Ubuntu (18.04–24.04) image with Ansible pre-installed,
+docker-ubuntu-ansible is an Ubuntu (20.04–24.04) image with Ansible pre-installed,
 designed for testing playbooks and roles. All versions live in a single repository
 and are published under different tags to Docker Hub and GHCR.
 
@@ -28,14 +28,18 @@ and are published under different tags to Docker Hub and GHCR.
   3. `podman exec --tty test-container env TERM=xterm ansible --version`
 
 ## CI/CD conventions
-- Version matrix: `18.04, 20.04, 22.04, 24.04`.
+- Version matrix: `20.04, 22.04, 24.04`.
+- `18.04` is archived — no longer built or published (see README, "Archive tags").
 - Platforms: `linux/amd64`, `linux/arm/v7`, `linux/arm64/v8`, `linux/ppc64le`,
-  `linux/s390x`; `linux/386` — 18.04 only.
+  `linux/s390x`.
 - Release tag: `x.x` or `x.x.x`, optional `v` prefix
   (regex `^v?[0-9]{1,2}\.[0-9]{1,2}(\.[0-9]{1,2})?$`), no suffixes — enforced by
   the `validate-tag` job.
-- `GITHUB_TOKEN` permissions are minimal: workflow-level `contents: read`,
-  `packages: write` only in the push job (`build-image.yml`).
+- `GITHUB_TOKEN` permissions are minimal: workflow-level `contents: read`.
+  Registry-capable callers grant `packages: write` on their calling job
+  (`release` in `release.yml`, `test-build` in `build.yml`), and `build-image.yml`
+  requests it on the `build` job. Note: a called workflow's token is the
+  *intersection* of the caller job's and the called job's permissions.
 - Images are published to Docker Hub (`kirillzak/docker-ubuntu-ansible`) and GHCR
   (`ghcr.io/<owner>/<repo>`).
 
