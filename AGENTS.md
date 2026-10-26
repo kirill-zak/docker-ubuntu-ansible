@@ -1,0 +1,63 @@
+# AGENTS.md
+
+## About the project
+docker-ubuntu-ansible is an Ubuntu (18.04–24.04) image with Ansible pre-installed,
+designed for testing playbooks and roles. All versions live in a single repository
+and are published under different tags to Docker Hub and GHCR.
+
+## Repository structure
+- `ubuntu<version>/` — separate build context: `Dockerfile`, `initctl_faker`,
+  `.dockerignore`.
+- `.github/workflows/`:
+  - `ci.yml` — checks on PR/push to master; calls reusable `test-image.yml`.
+  - `build.yml` — manual build check across all platforms (`workflow_dispatch`);
+    calls reusable `build-image.yml` with `push: false`.
+  - `release.yml` — publishing on tags: `validate-tag` → `test` → matrix
+    `release` (reusable `build-image.yml`, `secrets: inherit`).
+  - `test-image.yml`, `build-image.yml` — reusable workflows with shared steps.
+- `.context/optimize-ci.md` — CI/CD architecture plan and rationale (read before
+  changing the workflows).
+- `.gitignore` — files kept out of git (`.context`, `.omo`).
+
+## Build and test
+- Local build: `cd ubuntu24.04 && docker build -t docker-ubuntu-ansible .`
+- Smoke test, as in CI (`test-image.yml`):
+  1. `podman build -t docker-ubuntu-ansible:<version> ./ubuntu<version>/.`
+  2. `podman run --name test-container --detach --privileged \
+     --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-ubuntu-ansible:<version>`
+  3. `podman exec --tty test-container env TERM=xterm ansible --version`
+
+## CI/CD conventions
+- Version matrix: `18.04, 20.04, 22.04, 24.04`.
+- Platforms: `linux/amd64`, `linux/arm/v7`, `linux/arm64/v8`, `linux/ppc64le`,
+  `linux/s390x`; `linux/386` — 18.04 only.
+- Release tag: `x.x` or `x.x.x`, optional `v` prefix
+  (regex `^v?[0-9]{1,2}\.[0-9]{1,2}(\.[0-9]{1,2})?$`), no suffixes — enforced by
+  the `validate-tag` job.
+- `GITHUB_TOKEN` permissions are minimal: workflow-level `contents: read`,
+  `packages: write` only in the push job (`build-image.yml`).
+- Images are published to Docker Hub (`kirillzak/docker-ubuntu-ansible`) and GHCR
+  (`ghcr.io/<owner>/<repo>`).
+
+## Commit message conventions
+Use Conventional Commits:
+
+- New feature: `feat: <description>`
+- Bug fix: `fix: <description>`
+
+Guidelines:
+
+- The subject (first line) should be as short as possible; aim for ≤72 characters
+  (GitHub truncates longer subjects with an ellipsis).
+- Hard limit: the entire commit message (subject + optional body) must not exceed
+  140 characters.
+- If more context is needed, add a body separated by a blank line; keep the total
+  message within the 140-character limit.
+- Other Conventional Commits types may be used when `feat`/`fix` do not fit:
+  `docs:`, `refactor:`, `chore:`, `ci:`, `test:`.
+
+## How to add a new Ubuntu version
+1. Create `ubuntu<version>/` with `Dockerfile`, `initctl_faker`, `.dockerignore`.
+2. Add the version to the matrices in `ci.yml` and `release.yml` (both the `test`
+   job and the `release` job matrix) and to README.
+3. Run `workflow_dispatch` on `build.yml` and run the local smoke test.
