@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version_branch: [18.04, 20.04, 22.04, 24.04]
+        version_branch: [20.04, 22.04, 24.04]
     uses: ./.github/workflows/test-image.yml
     with:
       version_branch: ${{ matrix.version_branch }}
@@ -39,13 +39,14 @@ jobs:
   release:
     name: Release ${{ matrix.version_branch }}
     needs: [test, validate-tag]
+    permissions:
+      contents: read
+      packages: write
     if: ${{ needs.test.result == 'success' && (needs.validate-tag.result == 'success' || needs.validate-tag.result == 'skipped') }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - version_branch: 18.04
-            platforms: linux/386,linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
           - version_branch: 20.04
             platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
           - version_branch: 22.04
