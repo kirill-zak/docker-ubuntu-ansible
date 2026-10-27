@@ -1,5 +1,5 @@
 # Get build platform
-ARG BUILDPLATFORM=linux/amd64
+ARG BUILDPLATFORM
 
 FROM --platform=$BUILDPLATFORM ubuntu:22.04
 LABEL maintainer="Kirill Ziuzin"
