@@ -28,7 +28,7 @@ jobs:
       - id: values
         run: |
           {
-            echo 'versions=["20.04","22.04","24.04"]'
+            echo 'versions=["20.04","22.04","24.04","26.04"]'
             echo 'platforms=["linux/amd64","linux/arm/v7","linux/arm64/v8","linux/ppc64le","linux/s390x"]'
             echo 'latest_version=24.04'
           } >> "$GITHUB_OUTPUT"

@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## About the project
-docker-ubuntu-ansible is an Ubuntu (20.04–24.04) image with Ansible pre-installed,
+docker-ubuntu-ansible is an Ubuntu (20.04–26.04) image with Ansible pre-installed,
 designed for testing playbooks and roles. All versions live in a single repository
 and are published under different tags to Docker Hub and GHCR.
 
@@ -12,8 +12,11 @@ and are published under different tags to Docker Hub and GHCR.
   - `ci.yml` — checks on PR/push to master; calls reusable `test-image.yml`.
   - `build.yml` — manual build check across all platforms (`workflow_dispatch`);
     calls reusable `build-image.yml` with `push: false`.
-  - `release.yml` — publishing on tags: `validate-tag` → `test` → matrix
+  - `release.yml` — publishing on tags: `validate-tag` → `config` → `test` → matrix
     `release` (reusable `build-image.yml`, `secrets: inherit`).
+  - `config.yml` — reusable workflow, single source of constants: outputs
+    `versions` (JSON array), `platforms` (JSON array), `latest_version` (string);
+    callers drive their matrices from `needs.config.outputs.*`.
   - `test-image.yml`, `build-image.yml` — reusable workflows with shared steps.
 - `.context/optimize-ci.md` — CI/CD architecture plan and rationale (read before
   changing the workflows).
@@ -28,7 +31,10 @@ and are published under different tags to Docker Hub and GHCR.
   3. `podman exec --tty test-container env TERM=xterm ansible --version`
 
 ## CI/CD conventions
-- Version matrix: `20.04, 22.04, 24.04`.
+- Version matrix: `20.04, 22.04, 24.04, 26.04`.
+- Versions, platforms, and the `latest` tag mapping live in `config.yml`
+  (outputs `versions`, `platforms`, `latest_version`) — edit it to change the
+  build/test matrix; no other workflow needs editing for a version change.
 - `18.04` is archived — no longer built or published (see README, "Archive tags").
 - Platforms: `linux/amd64`, `linux/arm/v7`, `linux/arm64/v8`, `linux/ppc64le`,
   `linux/s390x`.
@@ -62,6 +68,7 @@ Guidelines:
 
 ## How to add a new Ubuntu version
 1. Create `ubuntu<version>/` with `Dockerfile`, `initctl_faker`, `.dockerignore`.
-2. Add the version to the matrices in `ci.yml` and `release.yml` (both the `test`
-   job and the `release` job matrix) and to README.
+2. Add `"<version>"` to the `versions` output in `.github/workflows/config.yml`
+   (and update `latest_version` there if the new version becomes `latest`), and
+   add the tag to README.
 3. Run `workflow_dispatch` on `build.yml` and run the local smoke test.
