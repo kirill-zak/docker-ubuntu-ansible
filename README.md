@@ -5,9 +5,10 @@ Ubuntu docker container with built-in Ansible for playbook and role testing
 Keep all version in one repository under different tags
 
 ## Tags
+- `26.04`. Ubuntu 26.04 LTS (Resolute Raccoon)
 - `20.04`. Ubuntu 20.04 LTS (Focal Fossa)
 - `22.04`. Ubuntu 22.04.2 LTS (Jammy Jellyfish)
-- `24.04`. Ubuntu 22.04.2 LTS (Noble Numbat)
+- `24.04`. Ubuntu 24.04.2 LTS (Noble Numbat)
 
 ## Platforms
 - `linux/amd64`

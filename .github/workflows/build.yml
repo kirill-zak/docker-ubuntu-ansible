@@ -6,21 +6,20 @@ permissions:
   contents: read
 
 jobs:
+  config:
+    uses: ./.github/workflows/config.yml
+
   test-build:
     name: Build ${{ matrix.version_branch }} / ${{ matrix.platform }}
+    needs: config
     permissions:
       contents: read
       packages: write
     strategy:
       fail-fast: false
       matrix:
-        platform:
-          - linux/amd64
-          - linux/arm/v7
-          - linux/arm64/v8
-          - linux/ppc64le
-          - linux/s390x
-        version_branch: [20.04, 22.04, 24.04]
+        platform: ${{ fromJSON(needs.config.outputs.platforms) }}
+        version_branch: ${{ fromJSON(needs.config.outputs.versions) }}
     uses: ./.github/workflows/build-image.yml
     with:
       version_branch: ${{ matrix.version_branch }}

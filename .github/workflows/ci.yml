@@ -10,12 +10,16 @@ permissions:
   contents: read
 
 jobs:
+  config:
+    uses: ./.github/workflows/config.yml
+
   test:
     name: Test
+    needs: config
     strategy:
       fail-fast: false
       matrix:
-        version_branch: [20.04, 22.04, 24.04]
+        version_branch: ${{ fromJSON(needs.config.outputs.versions) }}
     uses: ./.github/workflows/test-image.yml
     with:
       version_branch: ${{ matrix.version_branch }}
