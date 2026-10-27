@@ -26,19 +26,23 @@ jobs:
             exit 1
           fi
 
+  config:
+    uses: ./.github/workflows/config.yml
+
   test:
     name: Test
+    needs: config
     strategy:
       fail-fast: false
       matrix:
-        version_branch: [20.04, 22.04, 24.04]
+        version_branch: ${{ fromJSON(needs.config.outputs.versions) }}
     uses: ./.github/workflows/test-image.yml
     with:
       version_branch: ${{ matrix.version_branch }}
 
   release:
     name: Release ${{ matrix.version_branch }}
-    needs: [test, validate-tag]
+    needs: [config, test, validate-tag]
     permissions:
       contents: read
       packages: write
@@ -46,18 +50,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - version_branch: 20.04
-            platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          - version_branch: 22.04
-            platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          - version_branch: 24.04
-            platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-            additional_tags: latest
+        version_branch: ${{ fromJSON(needs.config.outputs.versions) }}
     uses: ./.github/workflows/build-image.yml
     with:
       version_branch: ${{ matrix.version_branch }}
-      platforms: ${{ matrix.platforms }}
-      additional_tags: ${{ matrix.additional_tags }}
+      platforms: ${{ join(fromJSON(needs.config.outputs.platforms), ',') }}
+      additional_tags: ${{ matrix.version_branch == needs.config.outputs.latest_version && 'latest' || '' }}
       push: true
     secrets: inherit

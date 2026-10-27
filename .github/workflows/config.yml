@@ -1,0 +1,34 @@
+---
+name: Configuration
+
+on:
+  workflow_call:
+    outputs:
+      versions:
+        description: JSON-массив поддерживаемых версий
+        value: ${{ jobs.config.outputs.versions }}
+      platforms:
+        description: JSON-массив поддерживаемых платформ
+        value: ${{ jobs.config.outputs.platforms }}
+      latest_version:
+        description: Версия, несущая тег latest
+        value: ${{ jobs.config.outputs.latest_version }}
+
+permissions:
+  contents: read
+
+jobs:
+  config:
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.values.outputs.versions }}
+      platforms: ${{ steps.values.outputs.platforms }}
+      latest_version: ${{ steps.values.outputs.latest_version }}
+    steps:
+      - id: values
+        run: |
+          {
+            echo 'versions=["20.04","22.04","24.04"]'
+            echo 'platforms=["linux/amd64","linux/arm/v7","linux/arm64/v8","linux/ppc64le","linux/s390x"]'
+            echo 'latest_version=24.04'
+          } >> "$GITHUB_OUTPUT"
