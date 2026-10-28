@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## About the project
-docker-ubuntu-ansible is an Ubuntu (20.04–26.04) image with Ansible pre-installed,
+docker-ubuntu-ansible is an Ubuntu (22.04–26.04) image with Ansible pre-installed,
 designed for testing playbooks and roles. All versions live in a single repository
 and are published under different tags to Docker Hub and GHCR.
 
@@ -36,11 +36,14 @@ and are published under different tags to Docker Hub and GHCR.
   `make test-build version_branch=24.04`).
 
 ## CI/CD conventions
-- Version matrix: `20.04, 22.04, 24.04, 26.04`.
+- Version matrix: `22.04, 24.04, 26.04`.
+- README lists version tags in descending order (newest first) — both in `Tags`
+  and in `Archive tags`.
 - Versions, platforms, and the `latest` tag mapping live in `config.yml`
   (outputs `versions`, `platforms`, `latest_version`) — edit it to change the
   build/test matrix; no other workflow needs editing for a version change.
-- `18.04` is archived — no longer built or published (see README, "Archive tags").
+- `18.04` and `20.04` are archived — no longer built or published (see README,
+  "Archive tags").
 - Platforms: `linux/amd64`, `linux/arm/v7`, `linux/arm64/v8`, `linux/ppc64le`,
   `linux/s390x`.
 - Release tag: `x.x` or `x.x.x`, optional `v` prefix

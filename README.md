@@ -6,9 +6,8 @@ Keep all version in one repository under different tags
 
 ## Tags
 - `26.04`. Ubuntu 26.04 LTS (Resolute Raccoon)
-- `20.04`. Ubuntu 20.04 LTS (Focal Fossa)
-- `22.04`. Ubuntu 22.04.2 LTS (Jammy Jellyfish)
 - `24.04`. Ubuntu 24.04.2 LTS (Noble Numbat)
+- `22.04`. Ubuntu 22.04.2 LTS (Jammy Jellyfish)
 
 ## Platforms
 - `linux/amd64`
@@ -40,6 +39,7 @@ To build the image on your own locally, do the following:
 Not supported and not updated docker images.
 
 List of archive tags:
+- `20.04`. Ubuntu 20.04 LTS (Focal Fossa)
 - `18.04`. Ubuntu 18.04 LTS (Bionic Beaver)
 
 ### Thanks
