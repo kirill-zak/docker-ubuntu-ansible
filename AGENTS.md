@@ -18,6 +18,9 @@ and are published under different tags to Docker Hub and GHCR.
     `versions` (JSON array), `platforms` (JSON array), `latest_version` (string);
     callers drive their matrices from `needs.config.outputs.*`.
   - `test-image.yml`, `build-image.yml` — reusable workflows with shared steps.
+- `Makefile` + `scripts/test.mk` — `make test-build` smoke test mirroring
+  `test-image.yml`; the version is set via the `version_branch` variable (default:
+  the latest supported version).
 - `.context/optimize-ci.md` — CI/CD architecture plan and rationale (read before
   changing the workflows).
 - `.gitignore` — files kept out of git (`.context`, `.omo`).
@@ -29,6 +32,8 @@ and are published under different tags to Docker Hub and GHCR.
   2. `podman run --name test-container --detach --privileged \
      --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-ubuntu-ansible:<version>`
   3. `podman exec --tty test-container env TERM=xterm ansible --version`
+- Or via the Makefile: `make test-build` (override the version with
+  `make test-build version_branch=24.04`).
 
 ## CI/CD conventions
 - Version matrix: `20.04, 22.04, 24.04, 26.04`.
@@ -69,6 +74,9 @@ Guidelines:
 ## How to add a new Ubuntu version
 1. Create `ubuntu<version>/` with `Dockerfile`, `initctl_faker`, `.dockerignore`.
 2. Add `"<version>"` to the `versions` output in `.github/workflows/config.yml`
-   (and update `latest_version` there if the new version becomes `latest`), and
-   add the tag to README.
-3. Run `workflow_dispatch` on `build.yml` and run the local smoke test.
+   (and update `latest_version` there if the new version becomes `latest`); add the
+   tag to README.
+3. If the new version is the latest, update the `version_branch` default in
+   `scripts/test.mk`.
+4. Run `workflow_dispatch` on `build.yml` and run the local smoke test
+   (`make test-build`).
