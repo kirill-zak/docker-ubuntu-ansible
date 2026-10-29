@@ -74,6 +74,11 @@ Guidelines:
 - Other Conventional Commits types may be used when `feat`/`fix` do not fit:
   `docs:`, `refactor:`, `chore:`, `ci:`, `test:`.
 
+## Branch workflow
+- After finishing the work on a branch, creating the PR, and passing all checks,
+  merge the PR with the branch-deletion option so the working branch is removed
+  from the GitHub repository.
+
 ## How to add a new Ubuntu version
 1. Create `ubuntu<version>/` with `Dockerfile`, `initctl_faker`, `.dockerignore`.
 2. Add `"<version>"` to the `versions` output in `.github/workflows/config.yml`
